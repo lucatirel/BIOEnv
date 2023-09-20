@@ -2,14 +2,12 @@ import random
 from creature_params import org_temp_ranges, org_healths, org_temp_increments
 
 class Organism():
-    def __init__(self, position) -> None:
+    def __init__(self, position, ) -> None:
         self.x, self.y, self.z = position
         self.is_dead = False
         
-        
     def move(self):
-        # dx, dy, dz = (random.randint(-1, 1), random.randint(-1, 1), random.randint(-1, 1))
-        dx, dy, dz = 1, 1, 1
+        dx, dy, dz = (random.randint(-1, 1), random.randint(-1, 1), random.randint(-1, 1))
         return dx, dy, dz
     
     

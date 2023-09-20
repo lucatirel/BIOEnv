@@ -1,4 +1,4 @@
-env_grid_size = (30, 30, 30)
+env_grid_size = (10, 10, 10)
 
 
 temp_init_range = (15, 15)
