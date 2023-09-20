@@ -10,9 +10,9 @@ np.random.seed(42)
 random.seed(42)
 
 if __name__ == "__main__":
-    organisms = [Bacteria(np.random.randint(0, 10, size=3)) for _ in range(100)] 
-    organisms += [Virus(np.random.randint(0, 10, size=3)) for _ in range(0)] 
-    organisms += [Fungus(np.random.randint(0, 10, size=3)) for _ in range(0)] 
+    organisms = [Bacteria(np.random.randint(0, 10, size=3)) for _ in range(1)] 
+    organisms += [Virus(np.random.randint(0, 10, size=3)) for _ in range(1)] 
+    organisms += [Fungus(np.random.randint(0, 10, size=3)) for _ in range(10)] 
     
     env = Environment(organisms)
     
@@ -33,6 +33,8 @@ if __name__ == "__main__":
               """)
         env.step()
         visualize_3d_heatmap(env.env_space_temps, fig, ax)
+        # visualize_3d_heatmap(env.env_space_org_density, fig, ax)
+
         
     
     

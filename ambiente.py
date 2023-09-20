@@ -1,6 +1,7 @@
 from ambiente_params import env_grid_size, temp_init_range, temp_decr
 import numpy as np
 from utils import calculate_damage
+
 class Cella():
     def __init__(self, indices, env_space_temps, env_space_org_density) -> None:
         self.x, self.y, self.z = indices
@@ -22,7 +23,7 @@ class Environment():
     def __init__(self, organisms, env_grid_size=env_grid_size, temp_init_range=temp_init_range, temp_decr=temp_decr) -> None:
         self.x_max, self.y_max, self.z_max = env_grid_size
         self.temp_decr = temp_decr
-        self.organisms = organisms
+        self.organisms = sorted(organisms, key=lambda x: x.org_interaction_priority)
         
         self.env_time = 0
         self.env_space_temps = np.random.uniform(temp_init_range[0], temp_init_range[1], env_grid_size)
@@ -48,22 +49,16 @@ class Environment():
             # Temperature Increments due to Environment
             if not org.is_dead:
                 cell = self.env_space[f"{org.x}-{org.y}-{org.z}"]
-                
                 calculate_damage(cell, org)
-                # cell_temp_is_dangerous = not (cell.cell_temp > org.temp_range[0] and cell.cell_temp < org.temp_range[1])
-                # if cell_temp_is_dangerous:
-                #     dmg = 0
-                #     if cell.cell_temp > org.temp_range[1]:
-                #         dmg = abs(abs(cell.cell_temp) - abs(org.temp_range[1]))
-                #     else:
-                #         dmg = abs(abs(cell.cell_temp) - abs(org.temp_range[0]))
-                #     org.health -= dmg
             
             if org.health > 0:
                 # Temperatures Increments due to Organisms
                 self.env_space_temps[org.x, org.y, org.z] += org.temp_incr
                 
                 # Movement
+                org.get_surroundings(self.env_space_temps, self.env_space_org_density)
+                
+                org.interact()
                 dx, dy, dz = org.move()
                 self.update_pos_check(org, dx, dy, dz)
                                 

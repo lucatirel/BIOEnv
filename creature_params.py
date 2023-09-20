@@ -18,3 +18,15 @@ org_healths = {
     'fungus': 35,
     'virus': 50,
                }
+
+org_interaction_priority = {
+    'bacteria': 1,
+    'fungus': 0,
+    'virus': 2,
+               }
+
+org_sensing_range = {
+    'bacteria': 1,
+    'fungus': 1,
+    'virus': 1,
+               }
