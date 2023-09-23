@@ -7,3 +7,4 @@ def calculate_damage(cell, org):
         else:
             dmg = abs(abs(cell.cell_temp) - abs(org.temp_range[0]))
         org.health -= dmg
+        
