@@ -1,7 +1,7 @@
 from ambiente_params import env_grid_size, temp_init_range, temp_decr, env_organisms
 from creature import Organism
 import numpy as np
-from utils import calculate_damage
+from utils import organism_temp_damage
 
 class Cella():
     def __init__(self, indices, env_space_temps, env_space_org_density) -> None:
@@ -29,9 +29,8 @@ class Environment():
             Organism.create(np.random.randint(0, env_grid_size[0], size=3), org_type) 
             for org_type, count in env_organisms.items() 
             for _ in range(count)
-        ], key=lambda x: x.org_interaction_priority
+        ], key=lambda x: x.org_interaction_priority, reverse=True,
         )
-        # self.organisms = sorted(organisms, key=lambda x: x.org_interaction_priority)
         
         self.env_time = 0
         self.env_space_temps = np.random.uniform(temp_init_range[0], temp_init_range[1], env_grid_size)
@@ -54,31 +53,27 @@ class Environment():
         self.env_space_temps = np.where(self.env_space_org_density == 0, self.env_space_temps + self.temp_decr, self.env_space_temps)
 
         for org in self.organisms:
-            
-            
             # Temperature Deltas due to Environment
             if not org.is_dead:
                 cell = self.env_space[f"{org.x}-{org.y}-{org.z}"]
-                calculate_damage(cell, org)
+                organism_temp_damage(cell, org)
             
             if org.health > 0:
                 # Temperatures Deltas due to Organisms
                 self.env_space_temps[org.x, org.y, org.z] += org.temp_incr
                 
                 # Movement                
-                # print(id(org), org.name, org.x, org.y, org.z)
-                # org.interact(self.env_space_temps)
-                dx, dy, dz = org.move(self.env_space_temps)
-                
-                self.update_pos_check(org, dx, dy, dz)
-                                
+                print(id(org), org.name, org.x, org.y, org.z)
+                delta_pos = org.interact(self.env_space_temps)
+                self.update_org_position(org, *delta_pos)
+            
             else:
                 org.is_dead = True
         
         self.env_time += 1
         return 
     
-    def update_pos_check(self, org, dx, dy, dz):
+    def update_org_position(self, org, dx, dy, dz):
         old_pos = org.x, org.y, org.z
         
         if org.x + dx < self.x_max and org.x + dx >= 0:
@@ -93,7 +88,6 @@ class Environment():
         self.env_space_org_density[old_pos] -= 1
         self.env_space_org_density[new_pos] += 1
 
-        
         self.env_space[f"{old_pos[0]}-{old_pos[1]}-{old_pos[2]}"].organisms.remove(org)
         self.env_space[f"{new_pos[0]}-{new_pos[1]}-{new_pos[2]}"].organisms.append(org)
         

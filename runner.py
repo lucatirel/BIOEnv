@@ -13,6 +13,7 @@ if __name__ == "__main__":
     
     env = Environment()
     
+    visualize_3d_heatmap(env.env_space_org_density, fig, ax)
     for i in range(50):
         print(f"STEP {i}")
         print(f"""CREATURES ALIVE:\n
@@ -21,8 +22,9 @@ if __name__ == "__main__":
                 Fungus: {len([org for org in env.organisms if (not org.is_dead) and org.name == 'fungus'])}
               """)
         env.step()
-        # visualize_3d_heatmap(env.env_space_temps, fig, ax)
-        visualize_3d_heatmap(env.env_space_org_density, fig, ax)
+        
+        visualize_3d_heatmap(env.env_space_temps, fig, ax)
+        # visualize_3d_heatmap(env.env_space_org_density, fig, ax)
 
         
     

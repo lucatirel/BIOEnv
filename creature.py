@@ -23,7 +23,11 @@ class Organism():
         class_ = getattr(module, class_name)  # Get the class from the module
         return class_(position)
     
-    def move(self, env_space_temps=None):
+    def interact(self, env_space_temps=None):
+        delta_pos = self.move(env_space_temps)
+        return delta_pos
+        
+    def move(self, *kwargs):
         dx, dy, dz = (random.randint(-1, 1), random.randint(-1, 1), random.randint(-1, 1))
         return dx, dy, dz
     
@@ -34,6 +38,8 @@ class Organism():
         # surroundings = env_space_temps[rx[0]:rx[1], ry[0]:ry[1], rz[0]:rz[1]].shape
 
         return rx, ry, rz
+    
+    
         
     
         
@@ -45,36 +51,48 @@ class Bacteria(Organism):
     def __init__(self, position) -> None:
         super().__init__(position, 'bacteria')
         
-    def interact(self):
-        pass
+    # def interact(self, *kwargs):
+    #     pass
     
 class Virus(Organism):
     def __init__(self, position) -> None:
         super().__init__(position, 'virus')
         
     def interact(self, env_space_temps):
-        pass
+        detection_ranges = rx, ry, rz = self.get_surroundings()
+        surrounding_values = self.get_surroundings_values(detection_ranges, env_space_temps)
         
-    def move(self, env_space_temps):        
-        rx, ry, rz = self.get_surroundings()
-        state_temps = env_space_temps[rx[0]:rx[1], ry[0]:ry[1], rz[0]:rz[1]]
-        print(state_temps)
-        max_index_flat = np.argmax(state_temps)
-        max_index = np.unravel_index(max_index_flat, state_temps.shape)
-        dx, dy, dz = max_index[0]-self.x, max_index[1]-self.y, max_index[2]-self.z
+        target_pos = self.get_target_move_pos(detection_ranges, surrounding_values)
+        delta_pos = self.move(target_pos=target_pos)
         
-        if dx == 0 and dy == 0 and dz == 0:
-            return super().move()
+        return delta_pos
         
+    def move(self, target_pos=None):
+        if target_pos:        
+            dx, dy, dz = target_pos[0]-self.x, target_pos[1]-self.y, target_pos[2]-self.z
+        else:
+            dx, dy, dz = super().move()
+            
         return dx, dy, dz
-
+    
+    def get_surroundings_values(self, detection_ranges, env_space_temps):
+        rx, ry, rz = detection_ranges
+        return env_space_temps[rx[0]:rx[1], ry[0]:ry[1], rz[0]:rz[1]]
+    
+    def get_target_move_pos(self, detection_ranges, surrounding_values):
+        rx, ry, rz = detection_ranges
+        max_index_flat = np.argmax(surrounding_values)
+        local_max_index = np.unravel_index(max_index_flat, surrounding_values.shape)        
+        global_max_index = (local_max_index[0] + rx[0], local_max_index[1] + ry[0], local_max_index[2] + rz[0])
+        return global_max_index
+    
 
 class Fungus(Organism):
     def __init__(self, position) -> None:
         super().__init__(position, 'fungus')
         
-    def interact(self):
-        pass
+    # def interact(self):
+    #     pass
     
     def move(self, *args):
         return 0, 0, 0
