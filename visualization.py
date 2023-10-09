@@ -19,7 +19,7 @@ def visualize_3d_heatmap(data, fig, ax):
     data = data.flatten()
     
     # Crea un grafico scatter 3D con i valori di temperatura come colore
-    img = ax.scatter(x, y, z, c=data, cmap='Reds', marker='s', s=50, alpha=0.1)
+    img = ax.scatter(x, y, z, c=data, cmap='Reds', marker='s', s=100, alpha=0.1)
     
     plt.draw()  # Display the plot
     plt.pause(2)  # Pause for a short interval before continuing

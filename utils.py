@@ -8,3 +8,4 @@ def organism_temp_damage(cell, org):
             dmg = abs(abs(cell.cell_temp) - abs(org.temp_range[0]))
         org.health -= dmg
         
+
